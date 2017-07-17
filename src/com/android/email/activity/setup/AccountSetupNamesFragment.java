@@ -35,8 +35,15 @@ import com.android.email.activity.UiUtilities;
 import com.android.email.service.EmailServiceUtils;
 import com.android.email.setup.AuthenticatorSetupIntentHelper;
 import com.android.emailcommon.provider.Account;
+import com.android.emailcommon.provider.EmailContent.AccountColumns;
+import com.android.mail.utils.ContentProviderTask.UpdateTask;
+import com.android.emailcommon.provider.EmailContent;
+import android.content.ContentValues;
+import android.net.Uri;
 
 public class AccountSetupNamesFragment extends AccountSetupFragment {
+    private static final String DEFAULT_ACCOUNT_SIGNATURE =
+                                "Sent from OPENTHOS, an Android based open source desktop OS.";
     private EditText mDescription;
     private EditText mName;
     private View mAccountNameLabel;
@@ -66,6 +73,13 @@ public class AccountSetupNamesFragment extends AccountSetupFragment {
 
         setPreviousButtonVisibility(View.INVISIBLE);
 
+        /**
+         * Init default signature.
+         */
+        Uri uri = Uri.parse(EmailContent.CONTENT_URI + "/account" + "/1");
+        ContentValues cv = new ContentValues(1);
+        cv.put(AccountColumns.SIGNATURE, DEFAULT_ACCOUNT_SIGNATURE);
+        new UpdateTask().run(getActivity().getContentResolver(), uri, cv, null, null);
         return view;
     }
 
